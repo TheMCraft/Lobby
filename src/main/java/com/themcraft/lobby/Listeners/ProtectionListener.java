@@ -16,6 +16,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.TimeSkipEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class ProtectionListener implements Listener {
 
@@ -27,7 +28,8 @@ public class ProtectionListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (isInBuildMode(event.getPlayer())) return;
-        if (event.getPlayer().getItemInUse().getType() == Material.BOW) return;
+        ItemStack item = event.getItem();
+        if (item != null && item.getType() == Material.BOW) return;
         event.setCancelled(true);
     }
 

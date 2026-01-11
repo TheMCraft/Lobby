@@ -1,5 +1,6 @@
 # Lobby Plugin - Datenbank Konfiguration
 database:
+  type: "mysql"
   host: "localhost"
   port: 3306
   name: "lobby_db"

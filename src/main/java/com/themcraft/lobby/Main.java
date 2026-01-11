@@ -10,6 +10,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 
 
+
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -18,14 +20,13 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         Logger logger = getLogger();
 
-        // Erstelle die config.yml im Plugin-Ordner, falls noch nicht vorhanden
         saveDefaultConfig();
-        // Listener werden nachher registriert
 
         FileConfiguration cfg = getConfig();
+
+        String dbType = cfg.getString("database.type", "mysql").toLowerCase();
 
         String host = cfg.getString("database.host", "localhost");
         int port = cfg.getInt("database.port", 3306);
@@ -33,23 +34,27 @@ public final class Main extends JavaPlugin {
         String user = cfg.getString("database.user", "root");
         String password = cfg.getString("database.password", "password");
 
-        // Prüfen, ob der Benutzer die Platzhalterwerte noch nicht geändert hat
         boolean isPlaceholder = "localhost".equals(host) && port == 3306 && "minecraft".equals(name)
                 && "root".equals(user) && "password".equals(password);
 
-        if (isPlaceholder) {
-            logger.info("[Lobby] Es wurden noch keine Datenbank verbindung eingerichtet.");
+        if (!"mysql".equals(dbType) || isPlaceholder) {
+            logger.severe("[Lobby] Keine gültige MySQL-Konfiguration gefunden. Stelle sicher, dass 'database.type' = 'mysql' und die Zugangsdaten gesetzt sind.");
             return;
         }
 
-        // Versuche die Verbindung aufzubauen
         dbManager = new DatabaseManager(host, port, name, user, password, logger);
-        if (dbManager.connect()) {
-            logger.info("[Lobby] Datenbank verbindung hergestellt.");
-        } else {
-            logger.warning("[Lobby] Datenbank verbindung konnte nicht hergestellt werden. Siehe vorherige Fehlermeldungen.");
+        if (!dbManager.connect()) {
+            logger.severe("[Lobby] Datenbank verbindung konnte nicht hergestellt werden. Siehe vorherige Fehlermeldungen.");
+            return;
         }
-        // Registriere Listener
+
+        try {
+            dbManager.createTables();
+        } catch (SQLException e) {
+            logger.severe("[Lobby] Tabellen konnten nicht erstellt werden: " + e.getMessage());
+            return;
+        }
+
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new LeaveListener(), this);
         Bukkit.getPluginManager().registerEvents(new ScrollListener(), this);
@@ -57,7 +62,6 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ProtectionListener(), this);
         Bukkit.getPluginManager().registerEvents(new AbilityListener(this), this);
 
-        // Commands registrieren
         getCommand("lobby").setExecutor(new LobbyCommand(this));
         getCommand("setlobby").setExecutor(new LobbyCommand(this));
         getCommand("build").setExecutor(new BuildCommand(this));
@@ -65,10 +69,12 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         if (dbManager != null) {
             dbManager.disconnect();
         }
     }
-}
 
+    public DatabaseManager getDatabaseManager() {
+        return dbManager;
+    }
+}

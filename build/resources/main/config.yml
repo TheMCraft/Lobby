@@ -1,7 +1,13 @@
 # Lobby Plugin - Datenbank Konfiguration
 database:
+  type: "mysql"
   host: "localhost"
   port: 3306
   name: "lobby_db"
   user: "root"
   password: "password"
+
+general:
+  prefix: "&a&lLobby"
+  main-color: "&a"
+  secondary-color: "&7"
