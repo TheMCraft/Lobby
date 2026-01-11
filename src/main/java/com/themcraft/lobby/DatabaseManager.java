@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -151,5 +152,78 @@ public class DatabaseManager {
         try {
             if (connection != null && !connection.isClosed()) connection.close();
         } catch (SQLException ignored) {}
+    }
+
+    public int getCoins(UUID uuid) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT coins FROM user WHERE uuid = ?"
+        )) {
+            ps.setString(1, uuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("coins");
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void setCoins(UUID uuid, int coins) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "UPDATE user SET coins = ? WHERE uuid = ?"
+        )) {
+            ps.setInt(1, coins);
+            ps.setString(2, uuid.toString());
+            ps.executeUpdate();
+        }
+    }
+
+    public void addCoins(UUID uuid, int delta) throws SQLException {
+        int current = getCoins(uuid);
+        setCoins(uuid, current + delta);
+    }
+
+    public boolean isAbilityUnlocked(UUID uuid, String ability) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT abilities_unlocked FROM user WHERE uuid = ?"
+        )) {
+            ps.setString(1, uuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String list = rs.getString("abilities_unlocked");
+                    if (list == null || list.isBlank()) return false;
+                    List<String> parts = Arrays.asList(list.split(","));
+                    for (String p : parts) if (p.trim().equalsIgnoreCase(ability)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void unlockAbility(UUID uuid, String ability) throws SQLException {
+        String existing = "";
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT abilities_unlocked FROM user WHERE uuid = ?"
+        )) {
+            ps.setString(1, uuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) existing = rs.getString("abilities_unlocked") == null ? "" : rs.getString("abilities_unlocked");
+            }
+        }
+        List<String> parts = new ArrayList<>();
+        if (!existing.isBlank()) {
+            for (String s : existing.split(",")) if (!s.isBlank()) parts.add(s.trim());
+        }
+        boolean found = false;
+        for (String p : parts) if (p.equalsIgnoreCase(ability)) { found = true; break; }
+        if (!found) parts.add(ability);
+        String joined = String.join(",", parts);
+        try (PreparedStatement ps = connection.prepareStatement(
+                "UPDATE user SET abilities_unlocked = ? WHERE uuid = ?"
+        )) {
+            ps.setString(1, joined);
+            ps.setString(2, uuid.toString());
+            ps.executeUpdate();
+        }
     }
 }

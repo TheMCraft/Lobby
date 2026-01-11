@@ -108,4 +108,8 @@ public class ProtectionListener implements Listener {
         event.setCancelled(true);
     }
 
+    @EventHandler
+    public void onExperienceChange(PlayerExpChangeEvent event) {
+        event.setAmount(0);
+    }
 }

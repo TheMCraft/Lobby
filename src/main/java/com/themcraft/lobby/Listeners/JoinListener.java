@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
@@ -74,20 +75,42 @@ public class JoinListener implements Listener {
             } else {
                 player.getInventory().setItem(4, new ItemBuilder(Material.GRAY_DYE).setName("§8» §7Keine Fähigkeit §8«").setLore(List.of("§7Du kannst eine Fähigkeit mit der Kiste auswählen")).build());
             }
+            setupSidebar(player, data != null ? data.getCoins() : 0, data != null ? data.getAbilityEquipped() : "");
         } catch (SQLException ex) {
             plugin.getLogger().severe("DB Fehler beim Join von " + player.getName() + ": " + ex.getMessage());
             giveSpawnItems(player);
         }
+    }
+
+    private void setupSidebar(Player player, int coins, String ability) {
+        String prefix = plugin.getConfig().getString("general.prefix", "&a&lLobby").replaceAll("&", "§");
+        String mainColor = plugin.getConfig().getString("general.main-color", "&a").replaceAll("&", "§");
+        String secColor = plugin.getConfig().getString("general.secondary-color", "&7").replaceAll("&", "§");
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        if (manager != null) {
-            Scoreboard board = manager.getNewScoreboard();
-            Objective obj = board.registerNewObjective("lobby", "dummy");
-            obj.setDisplayName("§6§lLobby");
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.getScore("Spieler: §a" + player.getName()).setScore(1);
-            player.setScoreboard(board);
-        }
+        if (manager == null) return;
+        Scoreboard board = manager.getNewScoreboard();
+        Objective obj = board.registerNewObjective("lobby", "dummy");
+        obj.setDisplayName(prefix);
+        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        String empty0 = "";
+        String line1 = mainColor + "Spieler";
+        String line2 = secColor + player.getName();
+        String empty3 = "";
+        String line4 = mainColor + "Coins";
+        String line5 = secColor + coins;
+        String empty6 = "";
+
+        obj.getScore(empty0).setScore(6);
+        obj.getScore(line1).setScore(5);
+        obj.getScore(line2).setScore(4);
+        obj.getScore(empty3).setScore(3);
+        obj.getScore(line4).setScore(2);
+        obj.getScore(line5).setScore(1);
+        obj.getScore(empty6).setScore(0);
+
+        player.setScoreboard(board);
     }
 
     @EventHandler
@@ -95,9 +118,12 @@ public class JoinListener implements Listener {
         Player player = event.getPlayer();
         String equipped = "";
         ItemStack item = player.getInventory().getItem(4);
-        if (item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-            String name = item.getItemMeta().getDisplayName();
-            equipped = ChatColor.stripColor(name).replace("»", "").replace("«", "").trim();
+        if (item != null && item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null && meta.hasDisplayName()) {
+                String name = meta.getDisplayName();
+                equipped = ChatColor.stripColor(name).replace("»", "").replace("«", "").trim();
+            }
         }
         try {
             UserData existing = db.getUser(player.getUniqueId());
@@ -115,7 +141,7 @@ public class JoinListener implements Listener {
         if (s.contains("boost")) return Material.FEATHER;
         if (s.contains("rauch")) return Material.GUNPOWDER;
         if (s.contains("rakete") || s.contains("rocket")) return Material.FIREWORK_ROCKET;
-        if (s.contains("turbo") || s.contains("speed") || s.contains("turbo")) return Material.SUGAR;
+        if (s.contains("turbo") || s.contains("speed")) return Material.SUGAR;
         if (s.contains("blitz")) return Material.BLAZE_POWDER;
         if (s.contains("sprung") || s.contains("jump")) return Material.SLIME_BALL;
         if (s.contains("konfetti")) return Material.EGG;
@@ -139,10 +165,10 @@ public class JoinListener implements Listener {
     private List<String> loreForAbility(Material mat) {
         if (mat == Material.FEATHER) return List.of("§aSchleudert dich nach vorne");
         if (mat == Material.GUNPOWDER) return List.of("§7Erzeugt eine Rauchwolke", "§7Klicke zum auslösen");
-        if (mat == Material.FIREWORK_ROCKET) return List.of("§7Schießt dich nach oben", "§7Klicke zum auslösen");
-        if (mat == Material.SUGAR) return List.of("§7Gibt dir kurzzeitig Geschwindigkeit", "§7Klicke zum auslösen");
-        if (mat == Material.BLAZE_POWDER) return List.of("§7Zeigt einen Blitz-Effekt an", "§7Klicke zum auslösen");
-        if (mat == Material.SLIME_BALL) return List.of("§7Stoß dich nach oben", "§7Klicke zum auslösen");
+        if (mat == Material.FIREWORK_ROCKET) return List.of("§7Schießt dich nach oben", "§7Klicke zum ausrüsten");
+        if (mat == Material.SUGAR) return List.of("§7Gibt dir kurzzeitig Geschwindigkeit", "§7Klicke zum ausrüsten");
+        if (mat == Material.BLAZE_POWDER) return List.of("§7Zeigt einen Blitz-Effekt an", "§7Klicke zum ausrüsten");
+        if (mat == Material.SLIME_BALL) return List.of("§7Stoß dich nach oben", "§7Klicke zum ausrüsten");
         if (mat == Material.EGG) return List.of("§7Feuert Konfetti ab", "§7Klicke zum ausrüsten");
         if (mat == Material.BONE) return List.of("§7Gibt kurzzeitig Resistenz", "§7Klicke zum ausrüsten");
         return List.of("§7Du kannst eine Fähigkeit mit der Kiste auswählen");

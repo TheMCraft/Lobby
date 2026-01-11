@@ -7,6 +7,17 @@ database:
   user: "root"
   password: "password"
 
+abilities:
+  prices:
+    Boost: 100
+    Rauchbombe: 150
+    Rakete: 200
+    Turbo: 120
+    Blitz: 180
+    Sprungpad: 130
+    Konfetti: 80
+    Schild: 160
+
 general:
   prefix: "&a&lLobby"
   main-color: "&a"

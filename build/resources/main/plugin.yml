@@ -15,3 +15,6 @@ commands:
     description: Build command
     permission: lobby.build
     usage: /build
+  coins:
+    description: Coins command
+    usage: /coins
