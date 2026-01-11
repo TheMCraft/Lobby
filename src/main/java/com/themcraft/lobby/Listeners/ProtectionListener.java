@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
@@ -82,14 +83,165 @@ public class ProtectionListener implements Listener {
     }
 
     @EventHandler
-    public void onHunger(FoodLevelChangeEvent event) {
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
         event.setCancelled(true);
     }
 
     @EventHandler
-    public void onTimeSkip(TimeSkipEvent event) {
+    public void onEntitySpawnGeneric(EntitySpawnEvent event) {
         event.setCancelled(true);
     }
+
+    @EventHandler
+    public void onEntitySpawnReason(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn2(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn3(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn4(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn5(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn6(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn7(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn8(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn9(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn10(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn11(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn12(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn13(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn14(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn15(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn16(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn17(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn18(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn19(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn20(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn21(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn22(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn23(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn24(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn25(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn26(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn27(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn28(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn29(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn30(EntitySpawnEvent event) {
+        event.setCancelled(true);
+    }
+
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent event) {
         if (event.toWeatherState()) {
@@ -108,8 +260,4 @@ public class ProtectionListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler
-    public void onExperienceChange(PlayerExpChangeEvent event) {
-        event.setAmount(0);
-    }
 }

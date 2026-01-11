@@ -5,9 +5,10 @@ import com.themcraft.lobby.Commands.BuildCommand;
 import com.themcraft.lobby.Commands.LobbyCommand;
 import com.themcraft.lobby.Listeners.*;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
-
+import org.bukkit.scheduler.BukkitRunnable;
 
 
 
@@ -61,10 +62,32 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MenuListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ProtectionListener(), this);
         Bukkit.getPluginManager().registerEvents(new AbilityListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new WorldListener(this), this);
 
         getCommand("lobby").setExecutor(new LobbyCommand(this));
         getCommand("setlobby").setExecutor(new LobbyCommand(this));
         getCommand("build").setExecutor(new BuildCommand(this));
+
+        applyWorldSettings();
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                applyWorldSettings();
+            }
+        }.runTaskTimer(this, 0L, 200L);
+    }
+
+    private void applyWorldSettings() {
+        for (World world : Bukkit.getWorlds()) {
+            try {
+                world.setTime(6000L);
+                world.setStorm(false);
+                world.setThundering(false);
+                world.setGameRule(org.bukkit.GameRule.DO_DAYLIGHT_CYCLE, false);
+                world.setGameRule(org.bukkit.GameRule.DO_WEATHER_CYCLE, false);
+            } catch (Exception ignored) {}
+        }
     }
 
     @Override
