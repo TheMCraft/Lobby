@@ -1,0 +1,17 @@
+name: Lobby
+version: '1.0'
+main: com.themcraft.lobby.Main
+api-version: '1.21'
+authors: [ TheMCraft ]
+commands:
+  setlobby:
+    description: Setlobby command
+    permission: lobby.setlobby
+    usage: /setlobby
+  lobby:
+    description: Lobby command
+    usage: /lobby
+  build:
+    description: Build command
+    permission: lobby.build
+    usage: /build
